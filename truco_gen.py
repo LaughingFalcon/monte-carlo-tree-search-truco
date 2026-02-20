@@ -28,11 +28,8 @@ class Mesa():
         self.points_player = 0
         self.turns_points = []
 
-        # none = 0 | player = 1 | mcts = 2 
-        # last truco | value
         self.truco = ['', 0]
         self.tah_trucando = ''
-        # player = 1 | mcts = 2 
         self.next_player = next_player
         self.player_que_comeca = next_player
         self.last_move = ''
@@ -208,12 +205,12 @@ class Mesa():
             case _:
                 if self.next_player == PlayerCode.MCTSPLAYER.name:
                     if action not in self.hand_mcts:
-                        print('Check')
+                        print('Eu não deveria ser um print')
                     self.card_mcts.append(action)
                     self.hand_mcts.remove(action)
                 else:
                     if action not in self.hand_player:
-                        print('Check')
+                        print('Tem maneiras melhores de ver se tem um bug')
                     self.card_player.append(action)
                     self.hand_player.remove(action)
                 self.update_points(action, self.next_player, isSimulation)

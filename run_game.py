@@ -1,10 +1,23 @@
+import players.random_player as random_player
+import players.human_player as human_player
 from enumerations import PlayerCode
-from nodes import MCTSNode
 from truco_gen import Mesa
+from nodes import MCTSNode
 from copy import deepcopy
 import functions
+import argparse
 import random
 import time
+
+def get_cmd_args():
+    parser = argparse.ArgumentParser(description='MCTS Truco by Acauã')
+
+    parser.add_argument('-t', '--time', default='1', type=int, help='Tempo, em segundos, que a MCTS terá para realizar as simulações')
+    parser.add_argument('-s', '--simulations', type=int, help='Indica que vamos usar o usuário aleatório e a quantidade de jogos de teste')
+    # parser.add_argument('-pn', '--player-name', help='Nome do jogador')
+    parser.add_argument('-hm', '--hide-messages', action='store_true')
+
+    return parser.parse_args()
 
 def mcts_search(root_state, tempo=1):
     root = MCTSNode(deepcopy(root_state), player=None)
@@ -31,39 +44,38 @@ def mcts_search(root_state, tempo=1):
 
         winner = node.rollout()
         node.backpropagate(winner)
-    print(f'{iterations} interações')
+    # print(f'{iterations} interações')
     best = max(root.children, key=lambda c: c.visits)
     return best.action
 
-def play_game():
+def play_game(args):
     current_player = random.choice([PlayerCode.RANDOMPLAYER.name, PlayerCode.MCTSPLAYER.name])
     mesa_de_jogo = Mesa(current_player)
     
-    print("MCTS Truco Demo")
+    if args.simulations is None:
+        challenger = human_player
+        max_jogos = 1
+    else:
+        challenger = random_player
+        max_jogos = args.simulations
+    
     jogos = 1
     mcts_ganhou = 0
     random_ganhou = 0
-    while(jogos <= 1):
-        mesa_de_jogo.print_mesa(jogos)
+    while(jogos <= max_jogos):
+        if not args.hide_messages:
+            mesa_de_jogo.print_mesa(jogos)
 
         if current_player == PlayerCode.MCTSPLAYER.name:
-            # print(f'Iniciando jogada de {current_player}')
-            move = mcts_search(mesa_de_jogo)
-            mesa_de_jogo.anunciar_movimento(move)
-            mesa_de_jogo.play_cards(move, False)
-            # mesa_de_jogo.play_cards(move)
+            move = mcts_search(mesa_de_jogo, args.time)
+            if not args.hide_messages:
+                mesa_de_jogo.anunciar_movimento(move)
+            mesa_de_jogo.play_cards(move, args.hide_messages)
         else:
-            # print(f'Iniciando jogada de {current_player}')
-            moves = mesa_de_jogo.available_actions()
-            # selected_move = random.choice(moves)
-            selected_move = ''
-            while(selected_move not in moves):
-                print('Escolha seu movimento')
-                selected_move = input(f'{moves}: ')
-
-            mesa_de_jogo.anunciar_movimento(selected_move)
-            mesa_de_jogo.play_cards(selected_move, False)
-            # mesa_de_jogo.play_cards(move)
+            move = challenger.choose_move(mesa_de_jogo)
+            if not args.hide_messages:
+                mesa_de_jogo.anunciar_movimento(move)
+            mesa_de_jogo.play_cards(move, args.hide_messages)
 
         current_player = mesa_de_jogo.next_player
 
@@ -74,14 +86,16 @@ def play_game():
             else:
                 random_ganhou+= 1
             print(f"{winner} ganhou!!! Chupa que é de uva!")
-            mesa_de_jogo.print_mesa(jogos)
+            if not args.hide_messages:
+                mesa_de_jogo.print_mesa(jogos)
             mesa_de_jogo = Mesa(current_player)
             jogos+= 1
             # return
-        print('------------------------------------------------')
+        if not args.hide_messages:
+            print('------------------------------------------------')
     
     print(f'\nVitórias MCTS: {mcts_ganhou}/{jogos-1} ({mcts_ganhou/(jogos-1)})')
     print(f'\nVitórias Random: {random_ganhou}/{jogos-1} ({random_ganhou/(jogos-1)})')
 
 if __name__ == "__main__":
-    play_game()
+    play_game(get_cmd_args())
