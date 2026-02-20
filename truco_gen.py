@@ -204,13 +204,9 @@ class Mesa():
 
             case _:
                 if self.next_player == PlayerCode.MCTSPLAYER.name:
-                    if action not in self.hand_mcts:
-                        print('Eu não deveria ser um print')
                     self.card_mcts.append(action)
                     self.hand_mcts.remove(action)
                 else:
-                    if action not in self.hand_player:
-                        print('Tem maneiras melhores de ver se tem um bug')
                     self.card_player.append(action)
                     self.hand_player.remove(action)
                 self.update_points(action, self.next_player, isSimulation)
