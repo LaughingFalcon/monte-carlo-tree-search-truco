@@ -2,7 +2,7 @@ from enum import Enum
 
 class PlayerCode(Enum):
     NOBODY = 0
-    RANDOMPLAYER = 1
+    CHALLENGERPLAYER = 1
     MCTSPLAYER = 2
 
 class PlayerMoves(Enum):

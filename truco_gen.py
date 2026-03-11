@@ -55,14 +55,14 @@ class Mesa():
         if len(self.card_mcts) > len(self.card_player):
             print(f'{PlayerCode.MCTSPLAYER.name} jogou um {self.card_name_converter(self.card_mcts[-1])} na mesa')
         if len(self.card_player) > len(self.card_mcts):
-            print(f'{PlayerCode.RANDOMPLAYER.name} jogou um {self.card_name_converter(self.card_player[-1])} na mesa')
+            print(f'{PlayerCode.CHALLENGERPLAYER.name} jogou um {self.card_name_converter(self.card_player[-1])} na mesa')
 
         for i in range(len(self.turns_points)):
             match(self.turns_points[i]):
                 case PlayerCode.MCTSPLAYER.value:
                     print(f'{PlayerCode.MCTSPLAYER.name} fez a {i+1}a')
-                case PlayerCode.RANDOMPLAYER.value:
-                    print(f'{PlayerCode.RANDOMPLAYER.name} fez a {i+1}a')
+                case PlayerCode.CHALLENGERPLAYER.value:
+                    print(f'{PlayerCode.CHALLENGERPLAYER.name} fez a {i+1}a')
                 case _:
                     print(f'A {i+1}a empatou')
         print()
@@ -105,7 +105,7 @@ class Mesa():
         self.next_player = ''
         self.last_move = ''
 
-        self.player_que_comeca = PlayerCode.RANDOMPLAYER.name if self.player_que_comeca == PlayerCode.MCTSPLAYER.name else PlayerCode.MCTSPLAYER.name
+        self.player_que_comeca = PlayerCode.CHALLENGERPLAYER.name if self.player_que_comeca == PlayerCode.MCTSPLAYER.name else PlayerCode.MCTSPLAYER.name
         self.next_player = self.player_que_comeca
     
     def card_name_converter(self, card):
@@ -216,7 +216,7 @@ class Mesa():
             case PlayerMoves.CORRER.name:
                 if current_player == PlayerCode.MCTSPLAYER.name:
                     self.points_player+= max(self.truco[1], 1)
-                    self.anunciar_pontuacao(isSimulation, PlayerCode.RANDOMPLAYER.name, max(self.truco[1], 1))
+                    self.anunciar_pontuacao(isSimulation, PlayerCode.CHALLENGERPLAYER.name, max(self.truco[1], 1))
                 else:
                     self.points_mcts+= max(self.truco[1], 1)
                     self.anunciar_pontuacao(isSimulation, PlayerCode.MCTSPLAYER.name, max(self.truco[1], 1))
@@ -228,8 +228,8 @@ class Mesa():
                 power_mcts = self.card_value_converter(self.card_mcts[-1])
                 power_player = self.card_value_converter(self.card_player[-1])
                 if power_player > power_mcts:
-                    self.turns_points.append(PlayerCode.RANDOMPLAYER.value)
-                    self.next_player = PlayerCode.RANDOMPLAYER.name
+                    self.turns_points.append(PlayerCode.CHALLENGERPLAYER.value)
+                    self.next_player = PlayerCode.CHALLENGERPLAYER.name
                 elif power_player < power_mcts:
                     self.turns_points.append(PlayerCode.MCTSPLAYER.value)
                     self.next_player = PlayerCode.MCTSPLAYER.name
@@ -245,19 +245,19 @@ class Mesa():
                             return
                         if self.turns_points[2] == 1:
                             self.points_player+= max(self.truco[1], 1)
-                            self.anunciar_pontuacao(isSimulation, PlayerCode.RANDOMPLAYER.name, max(self.truco[1], 1))
+                            self.anunciar_pontuacao(isSimulation, PlayerCode.CHALLENGERPLAYER.name, max(self.truco[1], 1))
                         elif self.turns_points[2] == 2:
                             self.points_mcts+= max(self.truco[1], 1)
                             self.anunciar_pontuacao(isSimulation, PlayerCode.MCTSPLAYER.name, max(self.truco[1], 1))
                         self.set_new_hands()
                     case 1:
                         self.points_player+= max(self.truco[1], 1)
-                        self.anunciar_pontuacao(isSimulation, PlayerCode.RANDOMPLAYER.name, max(self.truco[1], 1))
+                        self.anunciar_pontuacao(isSimulation, PlayerCode.CHALLENGERPLAYER.name, max(self.truco[1], 1))
                         self.set_new_hands()
                     case 2:
                         if self.turns_points[0] == 1:
                             self.points_player+= max(self.truco[1], 1)
-                            self.anunciar_pontuacao(isSimulation, PlayerCode.RANDOMPLAYER.name, max(self.truco[1], 1))
+                            self.anunciar_pontuacao(isSimulation, PlayerCode.CHALLENGERPLAYER.name, max(self.truco[1], 1))
                         else:
                             self.points_mcts+= max(self.truco[1], 1)
                             self.anunciar_pontuacao(isSimulation, PlayerCode.MCTSPLAYER.name, max(self.truco[1], 1))
@@ -270,13 +270,13 @@ class Mesa():
                             case 0:
                                 if self.turns_points[0] == 1:
                                     self.points_player+= max(self.truco[1], 1)
-                                    self.anunciar_pontuacao(isSimulation, PlayerCode.RANDOMPLAYER.name, max(self.truco[1], 1))
+                                    self.anunciar_pontuacao(isSimulation, PlayerCode.CHALLENGERPLAYER.name, max(self.truco[1], 1))
                                 else:
                                     self.points_mcts+= max(self.truco[1], 1)
                                     self.anunciar_pontuacao(isSimulation, PlayerCode.MCTSPLAYER.name, max(self.truco[1], 1))
                             case 1:
                                 self.points_player+= max(self.truco[1], 1)
-                                self.anunciar_pontuacao(isSimulation, PlayerCode.RANDOMPLAYER.name, max(self.truco[1], 1))
+                                self.anunciar_pontuacao(isSimulation, PlayerCode.CHALLENGERPLAYER.name, max(self.truco[1], 1))
                             case 0:
                                 self.points_mcts+= max(self.truco[1], 1)
                                 self.anunciar_pontuacao(isSimulation, PlayerCode.MCTSPLAYER.name, max(self.truco[1], 1))
@@ -291,11 +291,11 @@ class Mesa():
     def available_actions(self):
         if self.tah_trucando:
             if self.truco[1] < 12:
-                return [PlayerMoves.CORRER.name, PlayerMoves.AUMENTAR.name, PlayerMoves.DESCER.name]
-            else:
                 return [PlayerMoves.CORRER.name, PlayerMoves.DESCER.name]
+            else:
+                return [PlayerMoves.CORRER.name, PlayerMoves.DESCER.name, PlayerMoves.AUMENTAR.name]
 
-        if self.next_player == PlayerCode.RANDOMPLAYER.name: 
+        if self.next_player == PlayerCode.CHALLENGERPLAYER.name: 
             actions = deepcopy(self.hand_player)
         else:
             actions = deepcopy(self.hand_mcts)

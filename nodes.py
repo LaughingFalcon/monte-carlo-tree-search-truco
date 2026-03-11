@@ -1,6 +1,8 @@
+from enumerations import PlayerMoves
 from enumerations import PlayerCode
 from truco_gen import Mesa
 from copy import deepcopy
+import statistics
 import functions
 import random
 import math
