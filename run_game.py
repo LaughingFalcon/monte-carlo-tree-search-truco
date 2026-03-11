@@ -25,7 +25,6 @@ def play_game(args):
 
     mcts_killer = MctsPlayer(args.time)
     if args.simulations is None:
-        print(f'simulaton "{args.simulations}" is none')
         challenger = human_player
         max_jogos = 1
     else:

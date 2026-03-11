@@ -290,7 +290,7 @@ class Mesa():
 
     def available_actions(self):
         if self.tah_trucando:
-            if self.truco[1] < 12:
+            if self.truco[1] >= 12:
                 return [PlayerMoves.CORRER.name, PlayerMoves.DESCER.name]
             else:
                 return [PlayerMoves.CORRER.name, PlayerMoves.DESCER.name, PlayerMoves.AUMENTAR.name]
